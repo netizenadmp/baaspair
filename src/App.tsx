@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Globe, 
@@ -24,6 +24,122 @@ import {
 } from 'lucide-react';
 
 // --- Components ---
+
+const GlobalDataFlow = () => {
+  return (
+    <div className="relative w-full aspect-square max-w-[500px] mx-auto bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl border border-slate-800">
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #475569 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+      </div>
+      
+      {/* Animated Connections */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 400">
+        {[...Array(6)].map((_, i) => (
+          <motion.path
+            key={i}
+            d={`M ${50 + Math.random() * 300} ${50 + Math.random() * 300} Q ${200} ${200} ${50 + Math.random() * 300} ${50 + Math.random() * 300}`}
+            stroke="rgba(180, 138, 1, 0.3)"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ 
+              pathLength: [0, 1, 1, 0],
+              opacity: [0, 1, 1, 0]
+            }}
+            transition={{ 
+              duration: 4 + Math.random() * 4,
+              repeat: Infinity,
+              delay: i * 1.5,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </svg>
+
+      {/* Floating Data Nodes */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative w-64 h-64">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-3 h-3 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(180,138,1,0.8)]"
+              animate={{
+                x: [Math.cos(i * 45) * 100, Math.cos(i * 45) * 120, Math.cos(i * 45) * 100],
+                y: [Math.sin(i * 45) * 100, Math.sin(i * 45) * 120, Math.sin(i * 45) * 100],
+                opacity: [0.4, 1, 0.4]
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+          <motion.div 
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <div className="w-32 h-32 bg-brand-accent/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-brand-accent/20">
+              <Globe2 className="text-brand-accent w-16 h-16" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Transaction Feed Overlay */}
+      <div className="absolute bottom-6 left-6 right-6 space-y-2">
+        {[1, 2, 3].map((i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.5, duration: 0.5 }}
+            className="bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-brand-accent/20 rounded-lg flex items-center justify-center">
+                <Zap size={14} className="text-brand-accent" />
+              </div>
+              <div>
+                <p className="text-[10px] text-white/40 uppercase font-bold tracking-wider">Transaction</p>
+                <p className="text-xs text-white font-mono">USD → EUR</p>
+              </div>
+            </div>
+            <p className="text-xs text-brand-accent font-bold">+$1,240.00</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const NetworkPulse = ({ color = "brand-accent" }) => {
+  return (
+    <div className="relative w-full h-full bg-slate-900 rounded-3xl overflow-hidden flex items-center justify-center">
+      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#475569 1px, transparent 1px), linear-gradient(90deg, #475569 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+      <div className="relative">
+        <motion.div
+          animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+          transition={{ duration: 3, repeat: Infinity }}
+          className={`w-20 h-20 rounded-full border-2 border-${color} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+        />
+        <div className={`w-12 h-12 bg-${color} rounded-full flex items-center justify-center text-white shadow-lg`}>
+          <Network size={24} />
+        </div>
+      </div>
+      <div className="absolute bottom-4 left-4 right-4">
+        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+          <motion.div 
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className={`h-full w-1/3 bg-${color}`}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,6 +162,12 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md border-b border-slate-200 py-3 shadow-sm' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
+          <img 
+            src="https://picsum.photos/seed/baas-logo-gold/200/200" 
+            alt="BAAS Logo" 
+            className="h-8 w-auto object-contain"
+            referrerPolicy="no-referrer"
+          />
           <span className="text-xl font-display font-bold tracking-tighter uppercase text-brand-primary">BAAS INC</span>
         </div>
 
@@ -148,7 +270,7 @@ const Hero = () => {
                 {[1, 2, 3, 4].map((i) => (
                   <img 
                     key={i}
-                    src={`https://picsum.photos/seed/partner${i}/100/100`} 
+                    src={`https://picsum.photos/seed/bank-partner-${i}/100/100`} 
                     alt="Partner" 
                     className="w-12 h-12 rounded-full border-4 border-white object-cover shadow-sm"
                     referrerPolicy="no-referrer"
@@ -168,15 +290,7 @@ const Hero = () => {
             transition={{ duration: 1, delay: 0.2 }}
             className="lg:col-span-5 relative"
           >
-            <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-3xl shadow-slate-200 border border-slate-100">
-              <img 
-                src="https://picsum.photos/seed/modern-banking/1000/1200" 
-                alt="Global Finance Hub" 
-                className="w-full h-auto grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-brand-primary/20 to-transparent" />
-            </div>
+            <GlobalDataFlow />
             
             {/* Floating Stat Card */}
             <motion.div 
@@ -293,7 +407,7 @@ const NetworkSection = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
                 <div className="h-64 rounded-3xl overflow-hidden shadow-lg">
-                  <img src="https://picsum.photos/seed/bank1/400/600" alt="Bank Partner" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <NetworkPulse color="brand-accent" />
                 </div>
                 <div className="h-48 rounded-3xl bg-brand-accent p-8 text-white flex flex-col justify-end">
                   <p className="text-3xl font-bold">100+</p>
@@ -306,7 +420,7 @@ const NetworkSection = () => {
                   <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Currencies</p>
                 </div>
                 <div className="h-64 rounded-3xl overflow-hidden shadow-lg">
-                  <img src="https://picsum.photos/seed/fintech1/400/600" alt="Fintech Partner" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <NetworkPulse color="brand-primary" />
                 </div>
               </div>
             </div>
@@ -325,17 +439,20 @@ const Services = () => {
     {
       title: "Market Entry Strategy",
       description: "We help you identify the best jurisdictions and banking partners based on your business model and target audience.",
-      icon: <BarChart3 size={32} />
+      icon: <BarChart3 size={32} />,
+      image: "https://picsum.photos/seed/banking-strategy/600/400"
     },
     {
       title: "BaaS RFP Management",
       description: "We manage the entire selection process, from defining requirements to negotiating commercial terms with banks.",
-      icon: <Briefcase size={32} />
+      icon: <Briefcase size={32} />,
+      image: "https://picsum.photos/seed/banking-rfp/600/400"
     },
     {
       title: "Technical Advisory",
       description: "Expert guidance on selecting the right middleware, ledger systems, and card processing partners.",
-      icon: <Cpu size={32} />
+      icon: <Cpu size={32} />,
+      image: "https://picsum.photos/seed/banking-api-tech/600/400"
     }
   ];
 
@@ -356,17 +473,201 @@ const Services = () => {
 
         <div className="grid lg:grid-cols-3 gap-12">
           {services.map((service, idx) => (
-            <div key={idx} className="group cursor-pointer p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all">
-              <div className="mb-8 text-brand-accent group-hover:scale-110 transition-transform duration-300">
-                {service.icon}
+            <div key={idx} className="group cursor-pointer bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden">
+              <div className="h-48 bg-slate-900 relative flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #475569 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 5, -5, 0]
+                  }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                  className="text-brand-accent/40"
+                >
+                  {React.cloneElement(service.icon as React.ReactElement, { size: 120 })}
+                </motion.div>
+                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-slate-900 to-transparent" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-brand-primary group-hover:text-brand-accent transition-colors">{service.title}</h3>
-              <p className="text-brand-secondary leading-relaxed mb-8">
-                {service.description}
-              </p>
-              <div className="h-px w-full bg-slate-100 group-hover:bg-brand-accent transition-colors" />
+              <div className="p-8">
+                <div className="mb-6 text-brand-accent">
+                  {service.icon}
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-brand-primary group-hover:text-brand-accent transition-colors">{service.title}</h3>
+                <p className="text-brand-secondary leading-relaxed mb-8">
+                  {service.description}
+                </p>
+                <div className="h-px w-full bg-slate-100 group-hover:bg-brand-accent transition-colors" />
+              </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const VirtualAccountProcess = () => {
+  const [step, setStep] = useState(0);
+  const steps = [
+    { title: "Client Onboarding", icon: <Users size={24} />, description: "Collect client details and business information." },
+    { title: "KYC/KYB Verification", icon: <ShieldCheck size={24} />, description: "Automated identity and compliance checks." },
+    { title: "Account Generation", icon: <Cpu size={24} />, description: "Assigning dedicated IBAN and virtual ledger." },
+    { title: "Account Ready", icon: <Zap size={24} />, description: "Virtual account is live and ready for payments." }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setStep((prev) => (prev + 1) % steps.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section className="py-24 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary leading-tight">
+              Instant <span className="text-brand-accent">Virtual Account</span> Issuance.
+            </h2>
+            <p className="text-lg text-brand-secondary mb-12">
+              Our automated workflow allows you to create fully compliant virtual bank accounts in your client's name in seconds, not weeks.
+            </p>
+
+            <div className="space-y-8">
+              {steps.map((s, i) => (
+                <div key={i} className={`flex items-center gap-6 transition-all duration-500 ${step === i ? 'opacity-100 translate-x-4' : 'opacity-40'}`}>
+                  <div className={`p-4 rounded-2xl ${step === i ? 'bg-brand-accent text-white shadow-lg shadow-brand-accent/20' : 'bg-slate-100 text-slate-400'}`}>
+                    {s.icon}
+                  </div>
+                  <div>
+                    <h4 className={`text-xl font-bold ${step === i ? 'text-brand-primary' : 'text-slate-400'}`}>{s.title}</h4>
+                    <p className="text-sm text-slate-500">{s.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <div className="relative">
+            <div className="bg-slate-50 rounded-[3rem] p-8 md:p-12 border border-slate-100 shadow-2xl relative z-10 min-h-[500px] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                {step === 0 && (
+                  <motion.div
+                    key="step0"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.1 }}
+                    className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-slate-100"
+                  >
+                    <div className="space-y-4">
+                      <div className="h-4 w-1/2 bg-slate-100 rounded-full" />
+                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-100 px-4 flex items-center text-slate-400 text-sm">Client Name: John Doe</div>
+                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-100 px-4 flex items-center text-slate-400 text-sm">Business: TechFlow Inc.</div>
+                      <div className="h-12 w-full bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold">Submit Details</div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {step === 1 && (
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.1 }}
+                    className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-slate-100 text-center"
+                  >
+                    <div className="relative w-24 h-24 mx-auto mb-6">
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0 border-4 border-brand-accent/20 border-t-brand-accent rounded-full"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center text-brand-accent">
+                        <ShieldCheck size={40} />
+                      </div>
+                    </div>
+                    <h4 className="text-xl font-bold text-brand-primary mb-2">Verifying Identity</h4>
+                    <p className="text-sm text-slate-500">Cross-referencing global watchlists...</p>
+                  </motion.div>
+                )}
+
+                {step === 2 && (
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.1 }}
+                    className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-slate-100"
+                  >
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-slate-100 rounded-xl animate-pulse" />
+                      <div className="space-y-2 flex-1">
+                        <div className="h-3 w-2/3 bg-slate-100 rounded-full animate-pulse" />
+                        <div className="h-3 w-1/2 bg-slate-100 rounded-full animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-8 w-full bg-slate-50 rounded-lg animate-pulse" />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {step === 3 && (
+                  <motion.div
+                    key="step3"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.1 }}
+                    className="w-full max-w-sm"
+                  >
+                    <div className="bg-linear-to-br from-brand-primary to-slate-800 p-8 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl" />
+                      <div className="flex justify-between items-start mb-12">
+                        <div className="text-xl font-display font-bold">BAAS INC.</div>
+                        <div className="flex gap-1">
+                          <div className="w-8 h-5 bg-brand-accent/40 rounded-sm" />
+                          <Zap size={24} className="text-brand-accent" />
+                        </div>
+                      </div>
+                      <div className="mb-8">
+                        <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Account Holder</p>
+                        <p className="text-lg font-medium">John Doe / TechFlow Inc.</p>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Virtual IBAN</p>
+                          <p className="text-sm font-mono tracking-wider">GB29 BAAS 0012 3456 7890</p>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <div className="w-10 h-6 bg-white/20 rounded-md mb-1" />
+                          <p className="text-[8px] uppercase tracking-tighter opacity-40">Virtual Card</p>
+                        </div>
+                      </div>
+                    </div>
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="mt-6 flex items-center justify-center gap-2 text-emerald-500 font-bold"
+                    >
+                      <CheckCircle2 size={18} /> Account Successfully Issued
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
+            {/* Background Glow */}
+            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-brand-accent/5 rounded-full blur-[100px]" />
+          </div>
         </div>
       </div>
     </section>
@@ -377,7 +678,12 @@ const CTA = () => {
   return (
     <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="bg-linear-to-br from-brand-primary to-brand-secondary rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-2xl shadow-brand-primary/20">
+        <div className="bg-brand-primary rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-2xl shadow-brand-primary/20">
+          {/* Animated Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(45deg, #B48A01 1px, transparent 1px), linear-gradient(-45deg, #B48A01 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+          </div>
+          
           {/* Decorative Circles */}
           <div className="absolute top-0 left-0 w-64 h-64 bg-brand-accent/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-accent/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
@@ -489,6 +795,7 @@ export default function App() {
         <Features />
         <NetworkSection />
         <Services />
+        <VirtualAccountProcess />
         <CTA />
       </main>
       <Footer />
