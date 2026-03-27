@@ -27,19 +27,19 @@ import {
 
 const GlobalDataFlow = () => {
   return (
-    <div className="relative w-full aspect-square max-w-[500px] mx-auto bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl border border-slate-800">
+    <div className="relative w-full aspect-square max-w-[500px] mx-auto bg-slate-50 rounded-[3rem] overflow-hidden shadow-2xl border border-slate-200">
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #475569 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #94a3b8 1px, transparent 0)', backgroundSize: '24px 24px' }} />
       </div>
       
       {/* Animated Connections */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 400">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <motion.path
             key={i}
             d={`M ${50 + Math.random() * 300} ${50 + Math.random() * 300} Q ${200} ${200} ${50 + Math.random() * 300} ${50 + Math.random() * 300}`}
-            stroke="rgba(180, 138, 1, 0.3)"
-            strokeWidth="1"
+            stroke="rgba(180, 138, 1, 0.4)"
+            strokeWidth="1.5"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ 
@@ -49,23 +49,41 @@ const GlobalDataFlow = () => {
             transition={{ 
               duration: 4 + Math.random() * 4,
               repeat: Infinity,
-              delay: i * 1.5,
+              delay: i * 1.2,
               ease: "easeInOut"
             }}
           />
         ))}
       </svg>
 
+      {/* Floating Currency Symbols */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={`currency-${i}`}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ 
+            opacity: [0, 0.8, 0], 
+            scale: [0.5, 1, 0.5],
+            x: [Math.random() * 400, Math.random() * 400],
+            y: [Math.random() * 400, Math.random() * 400]
+          }}
+          transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: i * 2 }}
+          className="absolute text-brand-accent font-bold text-2xl pointer-events-none"
+        >
+          {['$', '€', '£', '¥'][i % 4]}
+        </motion.div>
+      ))}
+
       {/* Floating Data Nodes */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-64 h-64">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-3 h-3 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(180,138,1,0.8)]"
+              className="absolute w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(180,138,1,0.8)]"
               animate={{
-                x: [Math.cos(i * 45) * 100, Math.cos(i * 45) * 120, Math.cos(i * 45) * 100],
-                y: [Math.sin(i * 45) * 100, Math.sin(i * 45) * 120, Math.sin(i * 45) * 100],
+                x: [Math.cos(i * 30) * 100, Math.cos(i * 30) * 130, Math.cos(i * 30) * 100],
+                y: [Math.sin(i * 30) * 100, Math.sin(i * 30) * 130, Math.sin(i * 30) * 100],
                 opacity: [0.4, 1, 0.4]
               }}
               transition={{
@@ -81,7 +99,7 @@ const GlobalDataFlow = () => {
             className="absolute inset-0 flex items-center justify-center"
           >
             <div className="w-32 h-32 bg-brand-accent/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-brand-accent/20">
-              <Globe2 className="text-brand-accent w-16 h-16" />
+              <Building2 className="text-brand-accent w-16 h-16" />
             </div>
           </motion.div>
         </div>
@@ -89,24 +107,24 @@ const GlobalDataFlow = () => {
 
       {/* Transaction Feed Overlay */}
       <div className="absolute bottom-6 left-6 right-6 space-y-2">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3, 4].map((i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.5, duration: 0.5 }}
-            className="bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10 flex items-center justify-between"
+            transition={{ delay: i * 0.4, duration: 0.5 }}
+            className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20 flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-brand-accent/20 rounded-lg flex items-center justify-center">
                 <Zap size={14} className="text-brand-accent" />
               </div>
               <div>
-                <p className="text-[10px] text-white/40 uppercase font-bold tracking-wider">Transaction</p>
-                <p className="text-xs text-white font-mono">USD → EUR</p>
+                <p className="text-[10px] text-brand-primary/60 uppercase font-bold tracking-wider">Transaction</p>
+                <p className="text-xs text-brand-primary font-mono">ID: #{Math.floor(Math.random() * 10000)}</p>
               </div>
             </div>
-            <p className="text-xs text-brand-accent font-bold">+$1,240.00</p>
+            <p className="text-xs text-brand-accent font-bold">+$ {(Math.random() * 5000).toFixed(2)}</p>
           </motion.div>
         ))}
       </div>
@@ -114,29 +132,73 @@ const GlobalDataFlow = () => {
   );
 };
 
-const NetworkPulse = ({ color = "brand-accent" }) => {
+const WalletCreationAnimation = () => {
   return (
-    <div className="relative w-full h-full bg-slate-900 rounded-3xl overflow-hidden flex items-center justify-center">
-      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#475569 1px, transparent 1px), linear-gradient(90deg, #475569 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-      <div className="relative">
+    <div className="relative w-full aspect-video bg-slate-50 rounded-[3rem] overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center">
+      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#94a3b8 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+      
+      {/* Wallet Base */}
+      <motion.div 
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative z-10 w-64 h-40 bg-brand-primary rounded-3xl shadow-2xl flex flex-col justify-between p-6 overflow-hidden"
+      >
+        <div className="flex justify-between items-start">
+          <div className="w-12 h-8 bg-brand-accent/30 rounded-lg" />
+          <Zap className="text-brand-accent" size={24} />
+        </div>
+        <div className="space-y-2">
+          <div className="h-2 w-3/4 bg-white/20 rounded-full" />
+          <div className="h-2 w-1/2 bg-white/10 rounded-full" />
+        </div>
+        <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-brand-accent/10 rounded-full blur-2xl" />
+      </motion.div>
+
+      {/* Flying Elements */}
+      {[...Array(5)].map((_, i) => (
         <motion.div
-          animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity }}
-          className={`w-20 h-20 rounded-full border-2 border-${color} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+          key={i}
+          initial={{ x: -200, y: -100, opacity: 0, scale: 0 }}
+          animate={{ 
+            x: [null, 0], 
+            y: [null, 0], 
+            opacity: [0, 1, 0],
+            scale: [0, 1, 0.5]
+          }}
+          transition={{ 
+            duration: 2, 
+            repeat: Infinity, 
+            delay: i * 0.6,
+            ease: "circOut"
+          }}
+          className="absolute z-20"
+        >
+          <div className="p-3 bg-white rounded-xl shadow-lg border border-slate-100 text-brand-accent">
+            {i % 2 === 0 ? <ShieldCheck size={20} /> : <CheckCircle2 size={20} />}
+          </div>
+        </motion.div>
+      ))}
+
+      {/* Floating Coins */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={`coin-${i}`}
+          initial={{ y: 200, opacity: 0 }}
+          animate={{ 
+            y: [-20, -100], 
+            opacity: [0, 1, 0],
+            x: Math.sin(i) * 100
+          }}
+          transition={{ 
+            duration: 3, 
+            repeat: Infinity, 
+            delay: i * 0.4,
+            ease: "easeOut"
+          }}
+          className="absolute bottom-0 w-4 h-4 bg-brand-accent rounded-full shadow-[0_0_10px_rgba(180,138,1,0.5)]"
         />
-        <div className={`w-12 h-12 bg-${color} rounded-full flex items-center justify-center text-white shadow-lg`}>
-          <Network size={24} />
-        </div>
-      </div>
-      <div className="absolute bottom-4 left-4 right-4">
-        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-          <motion.div 
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className={`h-full w-1/3 bg-${color}`}
-          />
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
@@ -162,13 +224,7 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md border-b border-slate-200 py-3 shadow-sm' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <img 
-            src="https://picsum.photos/seed/baas-logo-gold/200/200" 
-            alt="BAAS Logo" 
-            className="h-8 w-auto object-contain"
-            referrerPolicy="no-referrer"
-          />
-          <span className="text-xl font-display font-bold tracking-tighter uppercase text-brand-primary">BAAS INC</span>
+          <span className="text-xl font-display font-bold tracking-tighter uppercase text-brand-primary">BAAS</span>
         </div>
 
         {/* Desktop Nav */}
@@ -230,6 +286,30 @@ const Hero = () => {
       {/* Subtle Background Elements */}
       <div className="absolute top-0 right-0 -z-10 w-2/3 h-full bg-linear-to-bl from-slate-50 to-transparent opacity-60" />
       <div className="absolute top-1/4 -left-20 -z-10 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl opacity-30" />
+      
+      {/* Floating Banking Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(10)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ y: 0, opacity: 0 }}
+            animate={{ 
+              y: [0, -20, 0], 
+              opacity: [0, 0.2, 0],
+              x: [Math.random() * 1000, Math.random() * 1000]
+            }}
+            transition={{ 
+              duration: 10 + Math.random() * 10, 
+              repeat: Infinity, 
+              delay: i * 2 
+            }}
+            className="absolute text-brand-accent"
+            style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%` }}
+          >
+            {i % 2 === 0 ? <Zap size={24} /> : <ShieldCheck size={24} />}
+          </motion.div>
+        ))}
+      </div>
 
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-12 gap-16 items-center">
@@ -240,12 +320,6 @@ const Hero = () => {
             className="lg:col-span-7"
           >
             <div className="mb-8">
-              <img 
-                src="https://picsum.photos/seed/baas-consulting-logo/400/150" 
-                alt="BAAS INC Logo" 
-                className="h-16 w-auto object-contain mb-6"
-                referrerPolicy="no-referrer"
-              />
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-brand-primary text-[10px] font-bold uppercase tracking-[0.2em] border border-slate-200">
                 Global Banking-as-a-Service Advisory
               </div>
@@ -254,7 +328,7 @@ const Hero = () => {
               The Bridge to <span className="text-brand-accent">Global</span> Finance.
             </h1>
             <p className="text-xl text-brand-secondary leading-relaxed mb-12 max-w-2xl font-light">
-              BAAS INC is a specialized consulting firm connecting high-growth fintechs with established banking institutions worldwide. We navigate the complexity of BaaS so you can focus on innovation.
+              BAAS is a specialized consulting firm connecting high-growth fintechs with established banking institutions worldwide. We navigate the complexity of BaaS so you can focus on innovation.
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
               <button className="px-10 py-5 bg-brand-primary text-white rounded-full font-bold text-lg hover:shadow-2xl hover:shadow-brand-primary/20 transition-all flex items-center justify-center gap-3 group">
@@ -317,7 +391,7 @@ const Features = () => {
   const features = [
     {
       icon: <Building2 className="text-brand-accent" />,
-      title: "Bank Partnerships",
+      title: "Bank & Fintech Partnerships",
       description: "Direct access to Tier 1 and Tier 2 banks across Europe, Asia, and the Americas."
     },
     {
@@ -333,7 +407,7 @@ const Features = () => {
     {
       icon: <Users className="text-brand-accent" />,
       title: "Strategic Consulting",
-      description: "Tailored roadmaps for fintechs looking to launch cards, accounts, or lending."
+      description: "Tailored roadmaps for fintechs looking to launch cards, accounts, or payments."
     }
   ];
 
@@ -374,60 +448,33 @@ const NetworkSection = () => {
   return (
     <section id="network" className="py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary">Our Global <span className="text-brand-accent">Ecosystem</span>.</h2>
-            <p className="text-lg text-brand-secondary mb-10">
-              We don't just consult; we connect. Our network includes over 100 banks, 
-              EMIs, and technology providers worldwide, ensuring you find the perfect partner for your specific needs.
-            </p>
-            
-            <div className="space-y-6">
-              {[
-                "Access to multiple banking licenses (EMI, PI, Full Banking)",
-                "Support for 40+ currencies and local payment rails",
-                "Pre-vetted technology stacks for rapid deployment",
-                "End-to-end project management from RFP to Launch"
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <div className="mt-1 text-brand-accent">
-                    <CheckCircle2 size={20} />
-                  </div>
-                  <p className="text-brand-primary font-medium">{item}</p>
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary">Our Global <span className="text-brand-accent">Ecosystem</span>.</h2>
+          <p className="text-lg text-brand-secondary mb-10">
+            We don't just consult; we connect. Our network includes over 100 banks, 
+            EMIs, and technology providers worldwide, ensuring you find the perfect partner for your specific needs.
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-8 text-left mb-12">
+            {[
+              "Named accounts for individuals and businesses",
+              "Access to multiple banking licenses (EMI, PI, Full Banking)",
+              "Support for 40+ currencies and local payment rails",
+              "Pre-vetted technology stacks for rapid deployment",
+              "End-to-end project management from RFP to Launch"
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <div className="mt-1 text-brand-accent">
+                  <CheckCircle2 size={20} />
                 </div>
-              ))}
-            </div>
-
-            <button className="mt-12 px-8 py-4 bg-brand-primary text-white rounded-full font-bold hover:bg-brand-primary/90 transition-all">
-              Explore Our Network
-            </button>
+                <p className="text-brand-primary font-medium">{item}</p>
+              </div>
+            ))}
           </div>
 
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="h-64 rounded-3xl overflow-hidden shadow-lg">
-                  <NetworkPulse color="brand-accent" />
-                </div>
-                <div className="h-48 rounded-3xl bg-brand-accent p-8 text-white flex flex-col justify-end">
-                  <p className="text-3xl font-bold">100+</p>
-                  <p className="text-sm font-medium opacity-80 uppercase tracking-wider">Partners</p>
-                </div>
-              </div>
-              <div className="space-y-4 pt-12">
-                <div className="h-48 rounded-3xl bg-slate-100 p-8 text-brand-primary flex flex-col justify-end">
-                  <p className="text-3xl font-bold">40+</p>
-                  <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">Currencies</p>
-                </div>
-                <div className="h-64 rounded-3xl overflow-hidden shadow-lg">
-                  <NetworkPulse color="brand-primary" />
-                </div>
-              </div>
-            </div>
-            
-            {/* Decorative Element */}
-            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-accent/5 rounded-full blur-3xl" />
-          </div>
+          <button className="px-8 py-4 bg-brand-primary text-white rounded-full font-bold hover:bg-brand-primary/90 transition-all">
+            Explore Our Network
+          </button>
         </div>
       </div>
     </section>
@@ -474,19 +521,19 @@ const Services = () => {
         <div className="grid lg:grid-cols-3 gap-12">
           {services.map((service, idx) => (
             <div key={idx} className="group cursor-pointer bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden">
-              <div className="h-48 bg-slate-900 relative flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #475569 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+              <div className="h-48 bg-slate-50 relative flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #cbd5e1 1px, transparent 0)', backgroundSize: '16px 16px' }} />
                 <motion.div
                   animate={{ 
                     scale: [1, 1.1, 1],
                     rotate: [0, 5, -5, 0]
                   }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="text-brand-accent/40"
+                  className="text-brand-accent/20"
                 >
                   {React.cloneElement(service.icon as React.ReactElement, { size: 120 })}
                 </motion.div>
-                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-slate-900 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-slate-50 to-transparent" />
               </div>
               <div className="p-8">
                 <div className="mb-6 text-brand-accent">
@@ -509,10 +556,10 @@ const Services = () => {
 const VirtualAccountProcess = () => {
   const [step, setStep] = useState(0);
   const steps = [
-    { title: "Client Onboarding", icon: <Users size={24} />, description: "Collect client details and business information." },
+    { title: "Client Onboarding", icon: <Users size={24} />, description: "Collect individual or business details for named account issuance." },
     { title: "KYC/KYB Verification", icon: <ShieldCheck size={24} />, description: "Automated identity and compliance checks." },
     { title: "Account Generation", icon: <Cpu size={24} />, description: "Assigning dedicated IBAN and virtual ledger." },
-    { title: "Account Ready", icon: <Zap size={24} />, description: "Virtual account is live and ready for payments." }
+    { title: "Account Ready", icon: <Zap size={24} />, description: "Named account is live and ready for payments." }
   ];
 
   useEffect(() => {
@@ -533,10 +580,10 @@ const VirtualAccountProcess = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary leading-tight">
-              Instant <span className="text-brand-accent">Virtual Account</span> Issuance.
+              Instant <span className="text-brand-accent">Named Account</span> Issuance.
             </h2>
             <p className="text-lg text-brand-secondary mb-12">
-              Our automated workflow allows you to create fully compliant virtual bank accounts in your client's name in seconds, not weeks.
+              Our automated workflow allows you to create fully compliant accounts in your client's name in seconds. We support account creation for both individuals and businesses, ensuring every account is issued in the end-user's name.
             </p>
 
             <div className="space-y-8">
@@ -555,7 +602,10 @@ const VirtualAccountProcess = () => {
           </motion.div>
 
           <div className="relative">
-            <div className="bg-slate-50 rounded-[3rem] p-8 md:p-12 border border-slate-100 shadow-2xl relative z-10 min-h-[500px] flex items-center justify-center">
+            <div className="bg-slate-50 rounded-[3rem] p-8 md:p-12 border border-slate-100 shadow-2xl relative z-10 min-h-[500px] flex flex-col items-center justify-center">
+              <div className="w-full mb-8">
+                <WalletCreationAnimation />
+              </div>
               <AnimatePresence mode="wait">
                 {step === 0 && (
                   <motion.div
@@ -567,8 +617,8 @@ const VirtualAccountProcess = () => {
                   >
                     <div className="space-y-4">
                       <div className="h-4 w-1/2 bg-slate-100 rounded-full" />
-                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-100 px-4 flex items-center text-slate-400 text-sm">Client Name: John Doe</div>
-                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-100 px-4 flex items-center text-slate-400 text-sm">Business: TechFlow Inc.</div>
+                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-200 px-4 flex items-center text-brand-primary text-sm font-medium">Individual: John Doe</div>
+                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-200 px-4 flex items-center text-brand-primary text-sm font-medium">Business: TechFlow Inc.</div>
                       <div className="h-12 w-full bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold">Submit Details</div>
                     </div>
                   </motion.div>
@@ -628,13 +678,13 @@ const VirtualAccountProcess = () => {
                     exit={{ opacity: 0, scale: 1.1 }}
                     className="w-full max-w-sm"
                   >
-                    <div className="bg-linear-to-br from-brand-primary to-slate-800 p-8 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl" />
+                    <div className="bg-linear-to-br from-brand-accent to-brand-accent/80 p-8 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl" />
                       <div className="flex justify-between items-start mb-12">
-                        <div className="text-xl font-display font-bold">BAAS INC.</div>
+                        <div className="text-xl font-display font-bold">BAAS.</div>
                         <div className="flex gap-1">
-                          <div className="w-8 h-5 bg-brand-accent/40 rounded-sm" />
-                          <Zap size={24} className="text-brand-accent" />
+                          <div className="w-8 h-5 bg-white/40 rounded-sm" />
+                          <Zap size={24} className="text-white" />
                         </div>
                       </div>
                       <div className="mb-8">
@@ -678,26 +728,26 @@ const CTA = () => {
   return (
     <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="bg-brand-primary rounded-[3rem] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-2xl shadow-brand-primary/20">
+        <div className="bg-slate-50 rounded-[3rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl border border-slate-100">
           {/* Animated Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(45deg, #B48A01 1px, transparent 1px), linear-gradient(-45deg, #B48A01 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
           </div>
           
           {/* Decorative Circles */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-brand-accent/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+          <div className="absolute top-0 left-0 w-64 h-64 bg-brand-accent/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-accent/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
 
           <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-6xl font-bold mb-8">Ready to build the next generation of finance?</h2>
-            <p className="text-xl text-white/90 mb-12">
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 text-brand-primary">Ready to build the next generation of finance?</h2>
+            <p className="text-xl text-brand-secondary mb-12">
               Schedule a discovery call with our experts and explore how our global BaaS network can accelerate your growth.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button className="px-10 py-5 bg-brand-accent text-brand-primary rounded-full font-bold text-lg hover:shadow-xl transition-all">
+              <button className="px-10 py-5 bg-brand-primary text-white rounded-full font-bold text-lg hover:shadow-xl transition-all">
                 Book a Discovery Call
               </button>
-              <button className="px-10 py-5 bg-white/10 border border-white/20 text-white rounded-full font-bold text-lg hover:bg-white/20 transition-all backdrop-blur-sm">
+              <button className="px-10 py-5 bg-white border border-slate-200 text-brand-primary rounded-full font-bold text-lg hover:bg-slate-50 transition-all shadow-sm">
                 Contact Sales
               </button>
             </div>
@@ -712,17 +762,9 @@ const Footer = () => {
   return (
     <footer className="bg-white pt-24 pb-12 border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-20">
           <div className="col-span-1 lg:col-span-1">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10">
-                <img 
-                  src="https://picsum.photos/seed/baas-logo-gold/200/200" 
-                  alt="BAAS Logo" 
-                  className="w-full h-full object-contain"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
               <span className="text-xl font-display font-bold text-brand-primary uppercase">BAAS</span>
             </div>
             <p className="text-brand-secondary leading-relaxed mb-8">
@@ -742,7 +784,6 @@ const Footer = () => {
             <ul className="space-y-4 text-brand-secondary">
               <li><a href="#" className="hover:text-brand-accent transition-colors">Digital Banking</a></li>
               <li><a href="#" className="hover:text-brand-accent transition-colors">Card Issuing</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Lending as a Service</a></li>
               <li><a href="#" className="hover:text-brand-accent transition-colors">Crypto & Web3</a></li>
             </ul>
           </div>
@@ -752,29 +793,13 @@ const Footer = () => {
             <ul className="space-y-4 text-brand-secondary">
               <li><a href="#" className="hover:text-brand-accent transition-colors">About Us</a></li>
               <li><a href="#" className="hover:text-brand-accent transition-colors">Our Network</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Case Studies</a></li>
               <li><a href="#" className="hover:text-brand-accent transition-colors">Contact</a></li>
             </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold mb-8 text-brand-primary">Newsletter</h4>
-            <p className="text-brand-secondary mb-6">Get the latest BaaS insights delivered to your inbox.</p>
-            <div className="flex gap-2">
-              <input 
-                type="email" 
-                placeholder="Email address" 
-                className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-brand-accent/20 transition-all"
-              />
-              <button className="p-3 bg-brand-primary text-white rounded-xl hover:bg-brand-primary/90 transition-all">
-                <ArrowRight size={20} />
-              </button>
-            </div>
           </div>
         </div>
 
         <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-slate-500">
-          <p>© 2026 BAAS INC. All rights reserved.</p>
+          <p>© 2026 BAAS. All rights reserved.</p>
           <div className="flex gap-8">
             <a href="#" className="hover:text-brand-primary">Privacy Policy</a>
             <a href="#" className="hover:text-brand-primary">Terms of Service</a>
