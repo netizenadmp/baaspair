@@ -388,6 +388,44 @@ const Hero = () => {
   );
 };
 
+const StatsSection = () => {
+  const stats = [
+    { label: "Fintech Partners", value: "300+", description: "High-growth Innovators Globally" },
+    { label: "Bank Partnerships", value: "25+", description: "FDIC-Insured/Top Tier Banks" },
+    { label: "Customers Served", value: "150+", description: "Renowned Global Fintech Clients" },
+    { label: "Integration Rate", value: "98%", description: "Successful pairing success" },
+  ];
+
+  return (
+    <section className="py-20 bg-slate-50 border-y border-slate-100">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+          {stats.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="text-center"
+            >
+              <p className="text-4xl md:text-5xl font-display font-bold text-brand-primary mb-2 tracking-tighter">
+                {stat.value}
+              </p>
+              <p className="text-sm font-bold text-brand-accent uppercase tracking-widest mb-2">
+                {stat.label}
+              </p>
+              <p className="text-xs text-slate-500 font-medium max-w-[150px] mx-auto">
+                {stat.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Features = () => {
   const features = [
     {
@@ -819,6 +857,7 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
+        <StatsSection />
         <Features />
         <NetworkSection />
         <Services />
