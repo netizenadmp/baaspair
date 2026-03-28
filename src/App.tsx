@@ -921,7 +921,10 @@ const CTA = () => {
               <button className="px-10 py-5 bg-brand-primary text-white rounded-full font-bold text-lg hover:shadow-xl transition-all">
                 {t.cta.book}
               </button>
-              <button className="px-10 py-5 bg-white border border-slate-200 text-brand-primary rounded-full font-bold text-lg hover:bg-slate-50 transition-all shadow-sm">
+              <button 
+                onClick={() => window.location.href = `mailto:${t.cta.contact}`}
+                className="px-10 py-5 bg-white border border-slate-200 text-brand-primary rounded-full font-bold text-lg hover:bg-slate-50 transition-all shadow-sm"
+              >
                 {t.cta.contact}
               </button>
             </div>
@@ -968,7 +971,14 @@ const Footer = () => {
             <h4 className="font-bold mb-8 text-brand-primary">{t.footer.company}</h4>
             <ul className="space-y-4 text-brand-secondary">
               {t.footer.companyItems.map((item, i) => (
-                <li key={i}><a href="#" className="hover:text-brand-accent transition-colors">{item}</a></li>
+                <li key={i}>
+                  <a 
+                    href={item.includes('@') ? `mailto:${item}` : '#'} 
+                    className="hover:text-brand-accent transition-colors"
+                  >
+                    {item}
+                  </a>
+                </li>
               ))}
             </ul>
           </div>

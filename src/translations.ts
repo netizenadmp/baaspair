@@ -103,14 +103,14 @@ export const translations = {
       title: "Ready to build the next generation of finance?",
       subtitle: "Schedule a discovery call with our experts and explore how our global BaaS network can accelerate your growth.",
       book: "Book a Discovery Call",
-      contact: "Contact Sales"
+      contact: "baasinquiries@gmail.com"
     },
     footer: {
       description: "The leading global consulting firm for Banking-as-a-Service and Fintech infrastructure.",
       solutions: "Solutions",
       company: "Company",
       solutionItems: ["Digital Banking", "Card Issuing", "Crypto & Web3"],
-      companyItems: ["About Us", "Our Network", "Contact"],
+      companyItems: ["About Us", "Our Network", "baasinquiries@gmail.com"],
       rights: "© 2026 BAAS. All rights reserved.",
       links: ["Privacy Policy", "Terms of Service", "Cookie Policy"]
     }
@@ -217,14 +217,14 @@ export const translations = {
       title: "准备好构建下一代金融了吗？",
       subtitle: "与我们的专家预约探索电话，了解我们的全球 BaaS 网络如何加速您的增长。",
       book: "预约探索电话",
-      contact: "联系销售"
+      contact: "baasinquiries@gmail.com"
     },
     footer: {
       description: "全球领先的银行即服务 (BaaS) 和金融科技基础设施咨询公司。",
       solutions: "解决方案",
       company: "公司",
       solutionItems: ["数字银行", "发卡业务", "加密货币与 Web3"],
-      companyItems: ["关于我们", "我们的网络", "联系我们"],
+      companyItems: ["关于我们", "我们的网络", "baasinquiries@gmail.com"],
       rights: "© 2026 BAAS. 保留所有权利。",
       links: ["隐私政策", "服务条款", "Cookie 政策"]
     }
@@ -331,14 +331,14 @@ export const translations = {
       title: "Prêt à construire la prochaine génération de la finance ?",
       subtitle: "Planifiez un appel de découverte avec nos experts et explorez comment notre réseau mondial BaaS peut accélérer votre croissance.",
       book: "Réserver un Appel de Découverte",
-      contact: "Contacter les Ventes"
+      contact: "baasinquiries@gmail.com"
     },
     footer: {
       description: "Le principal cabinet de conseil mondial pour l'infrastructure Banking-as-a-Service and Fintech.",
       solutions: "Solutions",
       company: "Entreprise",
       solutionItems: ["Banque Numérique", "Émission de Cartes", "Crypto & Web3"],
-      companyItems: ["À Propos", "Notre Réseau", "Contact"],
+      companyItems: ["À Propos", "Notre Réseau", "baasinquiries@gmail.com"],
       rights: "© 2026 BAAS. Tous droits réservés.",
       links: ["Politique de Confidentialité", "Conditions d'Utilisation", "Politique de Cookies"]
     }
@@ -445,14 +445,14 @@ export const translations = {
       title: "¿Listo para construir la próxima generación de finanzas?",
       subtitle: "Programe una llamada de descubrimiento con nuestros expertos y explore cómo nuestra red global de BaaS puede acelerar su crecimiento.",
       book: "Reservar una Llamada de Descubrimiento",
-      contact: "Contactar a Ventas"
+      contact: "baasinquiries@gmail.com"
     },
     footer: {
       description: "La firma de consultoría global líder para infraestructura de Banking-as-a-Service y Fintech.",
       solutions: "Soluciones",
       company: "Empresa",
       solutionItems: ["Banca Digital", "Emisión de Tarjetas", "Cripto y Web3"],
-      companyItems: ["Sobre Nosotros", "Nuestra Red", "Contacto"],
+      companyItems: ["Sobre Nosotros", "Nuestra Red", "baasinquiries@gmail.com"],
       rights: "© 2026 BAAS. Todos los derechos reservados.",
       links: ["Política de Privacidad", "Términos de Servicio", "Política de Cookies"]
     }
