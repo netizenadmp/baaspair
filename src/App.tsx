@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Language, translations } from './translations';
 import { 
   Globe, 
   ShieldCheck, 
@@ -20,8 +21,22 @@ import {
   Briefcase, 
   Network,
   Cpu,
-  BarChart3
+  BarChart3,
+  ChevronDown
 } from 'lucide-react';
+
+// --- Context ---
+const LanguageContext = createContext<{
+  lang: Language;
+  setLang: (lang: Language) => void;
+  t: typeof translations['en'];
+}>({
+  lang: 'en',
+  setLang: () => {},
+  t: translations['en'],
+});
+
+const useTranslation = () => useContext(LanguageContext);
 
 // --- Components ---
 
@@ -204,8 +219,10 @@ const WalletCreationAnimation = () => {
 };
 
 const Navbar = () => {
+  const { lang, setLang, t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -213,11 +230,27 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setIsLangOpen(false);
+    if (isLangOpen) {
+      window.addEventListener('click', handleClickOutside);
+    }
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [isLangOpen]);
+
   const navLinks = [
-    { name: 'Solutions', href: '#solutions' },
-    { name: 'Network', href: '#network' },
-    { name: 'Services', href: '#services' },
-    { name: 'About', href: '#about' },
+    { name: t.nav.solutions, href: '#solutions' },
+    { name: t.nav.network, href: '#network' },
+    { name: t.nav.services, href: '#services' },
+    { name: t.nav.about, href: '#about' },
+  ];
+
+  const languages: { code: Language; label: string; flag: string }[] = [
+    { code: 'en', label: 'English', flag: '🇺🇸' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'zh', label: '中文', flag: '🇨🇳' },
   ];
 
   return (
@@ -239,15 +272,96 @@ const Navbar = () => {
               {link.name}
             </a>
           ))}
+          
+          {/* Language Switcher Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsLangOpen(!isLangOpen);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full border border-slate-200 text-xs font-bold text-brand-primary hover:bg-slate-200 transition-all"
+            >
+              <Globe size={14} className="text-brand-accent" />
+              {languages.find(l => l.code === lang)?.label}
+              <ChevronDown size={14} className={`transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} />
+            </button>
+            
+            <AnimatePresence>
+              {isLangOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 mt-2 w-40 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden py-2"
+                >
+                  {languages.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => {
+                        setLang(l.code);
+                        setIsLangOpen(false);
+                      }}
+                      className={`w-full px-4 py-2 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-3 ${lang === l.code ? 'text-brand-accent font-bold bg-brand-accent/5' : 'text-brand-secondary'}`}
+                    >
+                      <span className="text-lg">{l.flag}</span>
+                      {l.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button className="px-5 py-2.5 bg-brand-primary text-white rounded-full text-sm font-semibold hover:bg-brand-primary/90 transition-all shadow-md">
-            Get Started
+            {t.nav.getStarted}
           </button>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-brand-primary" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-4 md:hidden">
+          <div className="relative">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsLangOpen(!isLangOpen);
+              }}
+              className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200 text-[10px] font-bold text-brand-primary"
+            >
+              <Globe size={12} className="text-brand-accent" />
+              {lang.toUpperCase()}
+              <ChevronDown size={10} />
+            </button>
+            
+            <AnimatePresence>
+              {isLangOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden py-1"
+                >
+                  {languages.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => {
+                        setLang(l.code);
+                        setIsLangOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-xs hover:bg-slate-50 transition-colors flex items-center gap-2 ${lang === l.code ? 'text-brand-accent font-bold bg-brand-accent/5' : 'text-brand-secondary'}`}
+                    >
+                      <span>{l.flag}</span>
+                      {l.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <button className="text-brand-primary" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -271,7 +385,7 @@ const Navbar = () => {
                 </a>
               ))}
               <button className="w-full py-4 bg-brand-primary text-white rounded-xl font-semibold">
-                Get Started
+                {t.nav.getStarted}
               </button>
             </div>
           </motion.div>
@@ -282,6 +396,7 @@ const Navbar = () => {
 };
 
 const Hero = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative pt-32 pb-20 md:pt-56 md:pb-40 overflow-hidden bg-white">
       {/* Subtle Background Elements */}
@@ -322,21 +437,26 @@ const Hero = () => {
           >
             <div className="mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-brand-primary text-[10px] font-bold uppercase tracking-[0.2em] border border-slate-200">
-                Global Banking-as-a-Service Advisory
+                {t.hero.badge}
               </div>
             </div>
             <h1 className="text-6xl md:text-8xl font-display font-bold leading-[0.95] mb-10 text-brand-primary tracking-tighter">
-              The Bridge to <span className="text-brand-accent">Global</span> Finance.
+              {t.hero.title.split('Global').map((part, i, arr) => (
+                <React.Fragment key={i}>
+                  {part}
+                  {i < arr.length - 1 && <span className="text-brand-accent">Global</span>}
+                </React.Fragment>
+              ))}
             </h1>
             <p className="text-xl text-brand-secondary leading-relaxed mb-12 max-w-2xl font-light">
-              BAAS is a specialized consulting firm connecting high-growth fintechs with established banking institutions worldwide. We navigate the complexity of BaaS so you can focus on innovation.
+              {t.hero.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-5">
               <button className="px-10 py-5 bg-brand-primary text-white rounded-full font-bold text-lg hover:shadow-2xl hover:shadow-brand-primary/20 transition-all flex items-center justify-center gap-3 group">
-                Consult with Experts <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                {t.hero.consult} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button className="px-10 py-5 bg-white border border-slate-200 text-brand-primary rounded-full font-bold text-lg hover:bg-slate-50 transition-all">
-                Our Global Network
+                {t.hero.network}
               </button>
             </div>
             
@@ -354,7 +474,12 @@ const Hero = () => {
               </div>
               <div className="h-10 w-px bg-slate-200" />
               <p className="text-sm text-slate-500 font-medium">
-                Strategic partners across <span className="text-brand-primary font-bold">4 Continents</span>
+                {t.hero.partners.split('4 Continents').map((part, i, arr) => (
+                  <React.Fragment key={i}>
+                    {part}
+                    {i < arr.length - 1 && <span className="text-brand-primary font-bold">4 Continents</span>}
+                  </React.Fragment>
+                ))}
               </p>
             </div>
           </motion.div>
@@ -377,9 +502,9 @@ const Hero = () => {
                 <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-2xl">
                   <BarChart3 size={28} />
                 </div>
-                <p className="text-3xl font-display font-bold text-brand-primary tracking-tighter">98%</p>
+                <p className="text-3xl font-display font-bold text-brand-primary tracking-tighter">{t.hero.statValue}</p>
               </div>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-tight">Successful Partner Integrations</p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-tight">{t.hero.statLabel}</p>
             </motion.div>
           </motion.div>
         </div>
@@ -389,11 +514,12 @@ const Hero = () => {
 };
 
 const StatsSection = () => {
+  const { t } = useTranslation();
   const stats = [
-    { label: "Fintech Partners", value: "300+", description: "High-growth Innovators Globally" },
-    { label: "Bank Partnerships", value: "25+", description: "FDIC-Insured/Top Tier Banks" },
-    { label: "Customers Served", value: "150+", description: "Renowned Global Fintech Clients" },
-    { label: "Integration Rate", value: "98%", description: "Successful pairing success" },
+    t.stats.fintech,
+    t.stats.bank,
+    t.stats.customers,
+    t.stats.integration,
   ];
 
   return (
@@ -427,26 +553,27 @@ const StatsSection = () => {
 };
 
 const Features = () => {
+  const { t } = useTranslation();
   const features = [
     {
       icon: <Building2 className="text-brand-accent" />,
-      title: "Bank & Fintech Partnerships",
-      description: "Direct access to Tier 1 and Tier 2 banks across Europe, Asia, and the Americas."
+      title: t.features.items[0].title,
+      description: t.features.items[0].description
     },
     {
       icon: <ShieldCheck className="text-brand-accent" />,
-      title: "Compliance & Licensing",
-      description: "Navigate complex regulatory landscapes with our expert compliance advisory."
+      title: t.features.items[1].title,
+      description: t.features.items[1].description
     },
     {
       icon: <Cpu className="text-brand-accent" />,
-      title: "API Integration",
-      description: "Seamlessly connect to core banking systems through modern, secure API layers."
+      title: t.features.items[2].title,
+      description: t.features.items[2].description
     },
     {
       icon: <Users className="text-brand-accent" />,
-      title: "Strategic Consulting",
-      description: "Tailored roadmaps for fintechs looking to launch cards, accounts, or payments."
+      title: t.features.items[3].title,
+      description: t.features.items[3].description
     }
   ];
 
@@ -454,10 +581,9 @@ const Features = () => {
     <section id="solutions" className="py-24 bg-brand-surface">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-brand-primary">The Future of Banking is Modular.</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-brand-primary">{t.features.title}</h2>
           <p className="text-lg text-brand-secondary">
-            Banking-as-a-Service allows any company to offer financial products. 
-            We provide the expertise and connections to make it happen.
+            {t.features.subtitle}
           </p>
         </div>
 
@@ -484,24 +610,25 @@ const Features = () => {
 };
 
 const NetworkSection = () => {
+  const { t } = useTranslation();
   return (
     <section id="network" className="py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary">Our Global <span className="text-brand-accent">Ecosystem</span>.</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary">
+            {t.network.title.split('Ecosystem').map((part, i, arr) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < arr.length - 1 && <span className="text-brand-accent">Ecosystem</span>}
+              </React.Fragment>
+            ))}
+          </h2>
           <p className="text-lg text-brand-secondary mb-10">
-            We don't just consult; we connect. Our network includes over 100 banks, 
-            EMIs, and technology providers worldwide, ensuring you find the perfect partner for your specific needs.
+            {t.network.subtitle}
           </p>
           
           <div className="grid md:grid-cols-2 gap-8 text-left mb-12">
-            {[
-              "Named accounts for individuals and businesses",
-              "Access to multiple banking licenses (EMI, PI, Full Banking)",
-              "Support for 40+ currencies and local payment rails",
-              "Pre-vetted technology stacks for rapid deployment",
-              "End-to-end project management from RFP to Launch"
-            ].map((item, i) => (
+            {t.network.items.map((item, i) => (
               <div key={i} className="flex items-start gap-4">
                 <div className="mt-1 text-brand-accent">
                   <CheckCircle2 size={20} />
@@ -512,7 +639,7 @@ const NetworkSection = () => {
           </div>
 
           <button className="px-8 py-4 bg-brand-primary text-white rounded-full font-bold hover:bg-brand-primary/90 transition-all">
-            Explore Our Network
+            {t.network.cta}
           </button>
         </div>
       </div>
@@ -521,22 +648,23 @@ const NetworkSection = () => {
 };
 
 const Services = () => {
+  const { t } = useTranslation();
   const services = [
     {
-      title: "Market Entry Strategy",
-      description: "We help you identify the best jurisdictions and banking partners based on your business model and target audience.",
+      title: t.services.items[0].title,
+      description: t.services.items[0].description,
       icon: <BarChart3 size={32} />,
       image: "https://picsum.photos/seed/banking-strategy/600/400"
     },
     {
-      title: "BaaS RFP Management",
-      description: "We manage the entire selection process, from defining requirements to negotiating commercial terms with banks.",
+      title: t.services.items[1].title,
+      description: t.services.items[1].description,
       icon: <Briefcase size={32} />,
       image: "https://picsum.photos/seed/banking-rfp/600/400"
     },
     {
-      title: "Technical Advisory",
-      description: "Expert guidance on selecting the right middleware, ledger systems, and card processing partners.",
+      title: t.services.items[2].title,
+      description: t.services.items[2].description,
       icon: <Cpu size={32} />,
       image: "https://picsum.photos/seed/banking-api-tech/600/400"
     }
@@ -547,13 +675,13 @@ const Services = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
           <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-brand-primary">Comprehensive BaaS Consulting</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-brand-primary">{t.services.title}</h2>
             <p className="text-lg text-brand-secondary">
-              From initial concept to live operations, we provide the strategic and technical support needed to build a successful financial product.
+              {t.services.subtitle}
             </p>
           </div>
           <button className="px-8 py-4 bg-brand-accent text-white rounded-full font-bold hover:bg-brand-accent/90 transition-all shadow-lg shadow-brand-accent/20">
-            All Services
+            {t.services.cta}
           </button>
         </div>
 
@@ -593,12 +721,13 @@ const Services = () => {
 };
 
 const VirtualAccountProcess = () => {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const steps = [
-    { title: "Client Onboarding", icon: <Users size={24} />, description: "Collect individual or business details for named account issuance." },
-    { title: "KYC/KYB Verification", icon: <ShieldCheck size={24} />, description: "Automated identity and compliance checks." },
-    { title: "Account Generation", icon: <Cpu size={24} />, description: "Assigning dedicated IBAN and virtual ledger." },
-    { title: "Account Ready", icon: <Zap size={24} />, description: "Named account is live and ready for payments." }
+    { title: t.process.steps[0].title, icon: <Users size={24} />, description: t.process.steps[0].description },
+    { title: t.process.steps[1].title, icon: <ShieldCheck size={24} />, description: t.process.steps[1].description },
+    { title: t.process.steps[2].title, icon: <Cpu size={24} />, description: t.process.steps[2].description },
+    { title: t.process.steps[3].title, icon: <Zap size={24} />, description: t.process.steps[3].description }
   ];
 
   useEffect(() => {
@@ -619,10 +748,15 @@ const VirtualAccountProcess = () => {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-8 text-brand-primary leading-tight">
-              Instant <span className="text-brand-accent">Named Account</span> Issuance.
+              {t.process.title.split('Named Account').map((part, i, arr) => (
+                <React.Fragment key={i}>
+                  {part}
+                  {i < arr.length - 1 && <span className="text-brand-accent">Named Account</span>}
+                </React.Fragment>
+              ))}
             </h2>
             <p className="text-lg text-brand-secondary mb-12">
-              Our automated workflow allows you to create fully compliant accounts in your client's name in seconds. We support account creation for both individuals and businesses, ensuring every account is issued in the end-user's name.
+              {t.process.subtitle}
             </p>
 
             <div className="space-y-8">
@@ -656,9 +790,9 @@ const VirtualAccountProcess = () => {
                   >
                     <div className="space-y-4">
                       <div className="h-4 w-1/2 bg-slate-100 rounded-full" />
-                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-200 px-4 flex items-center text-brand-primary text-sm font-medium">Individual: John Doe</div>
-                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-200 px-4 flex items-center text-brand-primary text-sm font-medium">Business: TechFlow Inc.</div>
-                      <div className="h-12 w-full bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold">Submit Details</div>
+                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-200 px-4 flex items-center text-brand-primary text-sm font-medium">{t.process.demo.individual}</div>
+                      <div className="h-10 w-full bg-slate-50 rounded-xl border border-slate-200 px-4 flex items-center text-brand-primary text-sm font-medium">{t.process.demo.business}</div>
+                      <div className="h-12 w-full bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold">{t.process.demo.submit}</div>
                     </div>
                   </motion.div>
                 )}
@@ -681,8 +815,8 @@ const VirtualAccountProcess = () => {
                         <ShieldCheck size={40} />
                       </div>
                     </div>
-                    <h4 className="text-xl font-bold text-brand-primary mb-2">Verifying Identity</h4>
-                    <p className="text-sm text-slate-500">Cross-referencing global watchlists...</p>
+                    <h4 className="text-xl font-bold text-brand-primary mb-2">{t.process.demo.verifying}</h4>
+                    <p className="text-sm text-slate-500">{t.process.demo.crossRef}</p>
                   </motion.div>
                 )}
 
@@ -727,17 +861,17 @@ const VirtualAccountProcess = () => {
                         </div>
                       </div>
                       <div className="mb-8">
-                        <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Account Holder</p>
+                        <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">{t.process.demo.holder}</p>
                         <p className="text-lg font-medium">John Doe / TechFlow Inc.</p>
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">Virtual IBAN</p>
+                          <p className="text-[10px] uppercase tracking-widest opacity-60 mb-1">{t.process.demo.iban}</p>
                           <p className="text-sm font-mono tracking-wider">GB29 BAAS 0012 3456 7890</p>
                         </div>
                         <div className="flex flex-col items-end">
                           <div className="w-10 h-6 bg-white/20 rounded-md mb-1" />
-                          <p className="text-[8px] uppercase tracking-tighter opacity-40">Virtual Card</p>
+                          <p className="text-[8px] uppercase tracking-tighter opacity-40">{t.process.demo.card}</p>
                         </div>
                       </div>
                     </div>
@@ -747,7 +881,7 @@ const VirtualAccountProcess = () => {
                       transition={{ delay: 0.5 }}
                       className="mt-6 flex items-center justify-center gap-2 text-emerald-500 font-bold"
                     >
-                      <CheckCircle2 size={18} /> Account Successfully Issued
+                      <CheckCircle2 size={18} /> {t.process.demo.success}
                     </motion.div>
                   </motion.div>
                 )}
@@ -764,6 +898,7 @@ const VirtualAccountProcess = () => {
 };
 
 const CTA = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
@@ -778,16 +913,16 @@ const CTA = () => {
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-accent/5 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
 
           <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-6xl font-bold mb-8 text-brand-primary">Ready to build the next generation of finance?</h2>
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 text-brand-primary">{t.cta.title}</h2>
             <p className="text-xl text-brand-secondary mb-12">
-              Schedule a discovery call with our experts and explore how our global BaaS network can accelerate your growth.
+              {t.cta.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <button className="px-10 py-5 bg-brand-primary text-white rounded-full font-bold text-lg hover:shadow-xl transition-all">
-                Book a Discovery Call
+                {t.cta.book}
               </button>
               <button className="px-10 py-5 bg-white border border-slate-200 text-brand-primary rounded-full font-bold text-lg hover:bg-slate-50 transition-all shadow-sm">
-                Contact Sales
+                {t.cta.contact}
               </button>
             </div>
           </div>
@@ -798,6 +933,7 @@ const CTA = () => {
 };
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="bg-white pt-24 pb-12 border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-6">
@@ -808,7 +944,7 @@ const Footer = () => {
               <span className="text-xl font-display font-bold text-brand-primary uppercase">BAAS</span>
             </div>
             <p className="text-brand-secondary leading-relaxed mb-8">
-              The leading global consulting firm for Banking-as-a-Service and Fintech infrastructure.
+              {t.footer.description}
             </p>
             <div className="flex gap-4">
               {['twitter', 'linkedin', 'github'].map((social) => (
@@ -820,30 +956,30 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-bold mb-8 text-brand-primary">Solutions</h4>
+            <h4 className="font-bold mb-8 text-brand-primary">{t.footer.solutions}</h4>
             <ul className="space-y-4 text-brand-secondary">
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Digital Banking</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Card Issuing</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Crypto & Web3</a></li>
+              {t.footer.solutionItems.map((item, i) => (
+                <li key={i}><a href="#" className="hover:text-brand-accent transition-colors">{item}</a></li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold mb-8 text-brand-primary">Company</h4>
+            <h4 className="font-bold mb-8 text-brand-primary">{t.footer.company}</h4>
             <ul className="space-y-4 text-brand-secondary">
-              <li><a href="#" className="hover:text-brand-accent transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Our Network</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Contact</a></li>
+              {t.footer.companyItems.map((item, i) => (
+                <li key={i}><a href="#" className="hover:text-brand-accent transition-colors">{item}</a></li>
+              ))}
             </ul>
           </div>
         </div>
 
         <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-slate-500">
-          <p>© 2026 BAAS. All rights reserved.</p>
+          <p>{t.footer.rights}</p>
           <div className="flex gap-8">
-            <a href="#" className="hover:text-brand-primary">Privacy Policy</a>
-            <a href="#" className="hover:text-brand-primary">Terms of Service</a>
-            <a href="#" className="hover:text-brand-primary">Cookie Policy</a>
+            {t.footer.links.map((link, i) => (
+              <a key={i} href="#" className="hover:text-brand-primary">{link}</a>
+            ))}
           </div>
         </div>
       </div>
@@ -852,19 +988,24 @@ const Footer = () => {
 };
 
 export default function App() {
+  const [lang, setLang] = useState<Language>('en');
+  const t = translations[lang];
+
   return (
-    <div className="min-h-screen selection:bg-brand-accent/20">
-      <Navbar />
-      <main>
-        <Hero />
-        <StatsSection />
-        <Features />
-        <NetworkSection />
-        <Services />
-        <VirtualAccountProcess />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
+    <LanguageContext.Provider value={{ lang, setLang, t }}>
+      <div className="min-h-screen selection:bg-brand-accent/20">
+        <Navbar />
+        <main>
+          <Hero />
+          <StatsSection />
+          <Features />
+          <NetworkSection />
+          <Services />
+          <VirtualAccountProcess />
+          <CTA />
+        </main>
+        <Footer />
+      </div>
+    </LanguageContext.Provider>
   );
 }
