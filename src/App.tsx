@@ -647,79 +647,6 @@ const NetworkSection = () => {
   );
 };
 
-const Services = () => {
-  const { t } = useTranslation();
-  const services = [
-    {
-      title: t.services.items[0].title,
-      description: t.services.items[0].description,
-      icon: <BarChart3 size={32} />,
-      image: "https://picsum.photos/seed/banking-strategy/600/400"
-    },
-    {
-      title: t.services.items[1].title,
-      description: t.services.items[1].description,
-      icon: <Briefcase size={32} />,
-      image: "https://picsum.photos/seed/banking-rfp/600/400"
-    },
-    {
-      title: t.services.items[2].title,
-      description: t.services.items[2].description,
-      icon: <Cpu size={32} />,
-      image: "https://picsum.photos/seed/banking-api-tech/600/400"
-    }
-  ];
-
-  return (
-    <section id="services" className="py-24 bg-brand-surface border-y border-slate-100">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-          <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-brand-primary">{t.services.title}</h2>
-            <p className="text-lg text-brand-secondary">
-              {t.services.subtitle}
-            </p>
-          </div>
-          <button className="px-8 py-4 bg-brand-accent text-white rounded-full font-bold hover:bg-brand-accent/90 transition-all shadow-lg shadow-brand-accent/20">
-            {t.services.cta}
-          </button>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-12">
-          {services.map((service, idx) => (
-            <div key={idx} className="group cursor-pointer bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden">
-              <div className="h-48 bg-slate-50 relative flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #cbd5e1 1px, transparent 0)', backgroundSize: '16px 16px' }} />
-                <motion.div
-                  animate={{ 
-                    scale: [1, 1.1, 1],
-                    rotate: [0, 5, -5, 0]
-                  }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="text-brand-accent/20"
-                >
-                  {React.cloneElement(service.icon as React.ReactElement, { size: 120 })}
-                </motion.div>
-                <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-slate-50 to-transparent" />
-              </div>
-              <div className="p-8">
-                <div className="mb-6 text-brand-accent">
-                  {service.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-brand-primary group-hover:text-brand-accent transition-colors">{service.title}</h3>
-                <p className="text-brand-secondary leading-relaxed mb-8">
-                  {service.description}
-                </p>
-                <div className="h-px w-full bg-slate-100 group-hover:bg-brand-accent transition-colors" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
 const VirtualAccountProcess = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
@@ -1010,7 +937,6 @@ export default function App() {
           <StatsSection />
           <Features />
           <NetworkSection />
-          <Services />
           <VirtualAccountProcess />
           <CTA />
         </main>
